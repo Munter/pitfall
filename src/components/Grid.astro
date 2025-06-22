@@ -20,7 +20,7 @@ const nonCities = items.filter((i) => i.type !== "city");
     position: "relative",
     width: `${gridPx}px`,
     height: `${gridPx}px`,
-    transform: isometric ? "rotate(45deg) skew(-10deg, -10deg)" : "none",
+    transform: isometric ? "rotate(45deg) skew(-5deg, -5deg)" : "none",
   }}
 >
   {nonCities.map((i) => <Tile item={i} isometric={isometric} />)}

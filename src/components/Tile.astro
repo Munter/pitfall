@@ -44,10 +44,7 @@ const nameMap: Record<TileType, string> = {
     left: `${item.x * TILE_SIZE + 1}px`,
     width: `${sizeMap[item.type] * TILE_SIZE - 3}px`,
     height: `${sizeMap[item.type] * TILE_SIZE - 3}px`,
-    border: "1px solid black",
     outlineWidth: `${coverageMap[item.type] * TILE_SIZE}px`,
-    outlineColor: "rgba(0, 0, 255, 0.05)",
-    outlineStyle: "solid",
   }}
 >
   <span
@@ -65,7 +62,9 @@ const nameMap: Record<TileType, string> = {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--color-background);
-    border: 1px solid var(--color-border);
+    background-color: white;
+    border: 1px solid black;
+    outline-color: rgba(0, 0, 255, 0.05);
+    outline-style: solid;
   }
 </style>
