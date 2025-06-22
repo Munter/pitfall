@@ -1,22 +1,11 @@
 ---
-import Grid from "../components/Grid.astro";
+import GridEdit from "../components/GridEdit.svelte";
 import Layout from "../layouts/Layout.astro";
-import { gridItems } from "../placement";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-  <main>
-    <Grid items={gridItems} isometric />
-  </main>
+  <GridEdit client:load />
 </Layout>
-
-<style>
-  main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-</style>
