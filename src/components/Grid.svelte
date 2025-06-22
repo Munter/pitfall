@@ -2,12 +2,14 @@
   import { TILE_SIZE } from "../constants";
   import Tile from "./Tile.svelte";
 
-  const GRID_SIZE = 31;
-  const gridPx = TILE_SIZE * GRID_SIZE;
+  let gridSize = 31;
+
+  const gridPx = TILE_SIZE * gridSize;
 
   export let items = [];
   export let isometric = false;
   export let showCities = true;
+  export let zoom = 1;
 
   $: cities = items.filter((i) => i.type === "city");
   $: nonCities = items.filter((i) => i.type !== "city");
@@ -17,6 +19,7 @@
   class="grid-container"
   style:width="{gridPx}px"
   style:height="{gridPx}px"
+  style:zoom={zoom / 100}
   style:transform={isometric ? "rotate(-45deg) skew(5deg, 5deg)" : "none"}
   class:showCities
 >
@@ -31,7 +34,7 @@
   </div>
 
   <svg class="grid-lines" width={gridPx} height={gridPx}>
-    {#each Array.from({ length: GRID_SIZE + 1 }) as _, i}
+    {#each Array.from({ length: gridSize + 1 }) as _, i}
       <!-- Vertical lines -->
       <line
         x1={i * TILE_SIZE}
@@ -60,6 +63,7 @@
   .grid-container {
     overflow: hidden;
     position: relative;
+    transform-origin: center;
     transition: transform 0.3s ease-in-out;
   }
   .grid-lines {

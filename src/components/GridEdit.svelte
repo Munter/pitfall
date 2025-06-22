@@ -7,12 +7,11 @@
   let editorValue: EditorFormProps = {
     isEditing: false,
     showCities: true,
+    zoom: 100,
   };
 </script>
 
 <div class="grid-edit">
-  <h2>Grid Edit</h2>
-
   <aside>
     <h3>Controls</h3>
     <EditorForm
@@ -28,6 +27,7 @@
       items={gridItems}
       isometric={!editorValue.isEditing}
       showCities={editorValue.showCities}
+      zoom={editorValue.zoom}
     />
   </div>
 </div>
@@ -35,9 +35,8 @@
 <style>
   .grid-edit {
     display: grid;
-    grid-template-areas:
-      "header header"
-      "aside grid";
+    grid-template-areas: "aside grid";
+    grid-template-columns: 300px auto;
   }
 
   h2 {
