@@ -1,0 +1,71 @@
+---
+import { TILE_SIZE } from "../constants";
+import type { ItemType, TileType } from "../types/grid";
+
+interface Props {
+  item: ItemType;
+  idx?: number;
+  isometric?: boolean; // Optional prop to indicate if the grid is isometric
+}
+const { item, idx, isometric } = Astro.props as Props;
+
+const sizeMap: Record<TileType, number> = {
+  city: 2,
+  headquarters: 3,
+  banner: 1,
+  trap: 3,
+  mine: 2,
+  obstruction: 1,
+};
+
+const coverageMap: Record<TileType, number> = {
+  city: 0,
+  headquarters: 6,
+  banner: 3,
+  trap: 0,
+  mine: 0,
+  obstruction: 0,
+};
+
+const nameMap: Record<TileType, string> = {
+  city: "City",
+  headquarters: "HQ",
+  banner: "⚑",
+  trap: "Trap",
+  mine: "Mine",
+  obstruction: "Obstruction",
+};
+---
+
+<div
+  class="grid-item"
+  style={{
+    top: `${item.y * TILE_SIZE + 1}px`,
+    left: `${item.x * TILE_SIZE + 1}px`,
+    width: `${sizeMap[item.type] * TILE_SIZE - 3}px`,
+    height: `${sizeMap[item.type] * TILE_SIZE - 3}px`,
+    border: "1px solid black",
+    outlineWidth: `${coverageMap[item.type] * TILE_SIZE}px`,
+    outlineColor: "rgba(0, 0, 255, 0.05)",
+    outlineStyle: "solid",
+  }}
+>
+  <span
+    style={{
+      transform: isometric ? "rotate(-45deg)" : "none",
+    }}
+  >
+    {idx ?? nameMap[item.type]}
+  </span>
+</div>
+
+<style>
+  .grid-item {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+  }
+</style>

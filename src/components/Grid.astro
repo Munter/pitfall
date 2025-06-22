@@ -1,0 +1,78 @@
+---
+import { TILE_SIZE } from "../constants";
+import type { ItemType } from "../types/grid";
+import Tile from "./Tile.astro";
+const GRID_SIZE = 25;
+const gridPx = TILE_SIZE * GRID_SIZE;
+
+interface Props {
+  items: ItemType[];
+  isometric?: boolean; // Optional prop to indicate if the grid is isometric
+}
+const { items, isometric } = Astro.props as Props;
+const cities = items.filter((i) => i.type === "city");
+const nonCities = items.filter((i) => i.type !== "city");
+---
+
+<div
+  class="grid-container"
+  style={{
+    position: "relative",
+    width: `${gridPx}px`,
+    height: `${gridPx}px`,
+    transform: isometric ? "rotate(45deg) skew(-10deg, -10deg)" : "none",
+  }}
+>
+  {nonCities.map((i) => <Tile item={i} isometric={isometric} />)}
+  {
+    cities.map((i, idx) => (
+      <Tile item={i} idx={idx + 1} isometric={isometric} />
+    ))
+  }
+  <svg
+    class="grid-lines"
+    width={gridPx}
+    height={gridPx}
+    style="position:absolute;top:0;left:0;pointer-events:none;"
+  >
+    {
+      Array.from({ length: GRID_SIZE + 1 }).map((_, i) => (
+        <>
+          {/* Vertical lines */}
+          <line
+            x1={i * TILE_SIZE}
+            y1={0}
+            x2={i * TILE_SIZE}
+            y2={gridPx}
+            stroke="#8885"
+            stroke-dasharray="2 4"
+            stroke-width="1"
+          />
+          {/* Horizontal lines */}
+          <line
+            x1={0}
+            y1={i * TILE_SIZE}
+            x2={gridPx}
+            y2={i * TILE_SIZE}
+            stroke="#8885"
+            stroke-dasharray="2 4"
+            stroke-width="1"
+          />
+        </>
+      ))
+    }
+  </svg>
+</div>
+
+<style>
+  .grid-container {
+    position: relative;
+  }
+  .grid-lines {
+    z-index: 1;
+  }
+  .grid-container > :not(.grid-lines) {
+    position: absolute;
+    z-index: 2;
+  }
+</style>
