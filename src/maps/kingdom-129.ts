@@ -2,11 +2,28 @@ import type { KingshotMap } from "../types/grid";
 
 export const kingdom129: KingshotMap = [
   { type: 'castle', x: 597, y: 597 },
+
   { type: 'turret', x: 594, y: 594 },
   { type: 'turret', x: 594, y: 604 },
   { type: 'turret', x: 604, y: 604 },
   { type: 'turret', x: 604, y: 594 },
 
+  { type: 'fort', x: 597, y: 800 },
+  { type: 'fort', x: 400, y: 597 },
+  { type: 'fort', x: 597, y: 400 },
+  { type: 'fort', x: 800, y: 597 },
+
+  { type: 'sanctuary', x: 237, y: 828 },
+  { type: 'sanctuary', x: 237, y: 606 },
+  { type: 'sanctuary', x: 237, y: 348 },
+  { type: 'sanctuary', x: 366, y: 237 },
+  { type: 'sanctuary', x: 588, y: 237 },
+  { type: 'sanctuary', x: 846, y: 237 },
+  { type: 'sanctuary', x: 957, y: 606 },
+  { type: 'sanctuary', x: 957, y: 828 },
+  { type: 'sanctuary', x: 846, y: 957 },
+  { type: 'sanctuary', x: 606, y: 957 },
+  { type: 'sanctuary', x: 366, y: 957 },
 
   { type: 'mine', x: 557, y: 472, resource: 'wood' },
 
