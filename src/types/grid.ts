@@ -1,16 +1,32 @@
-export type TileType = "city" | "headquarters" | "banner" | "trap" | "mine" | "obstruction";
+export type TileType = "city" | "headquarters" | "banner" | "trap" | "mine" | "mountain" | "river" | "turret" | "castle" | "fort" | "sanctuary";
+type ResourceType = "bread" | "wood" | "stone" | "iron";
 
-type GridItem = {
-  type: TileType;
+export type GridItem<TType extends TileType> = {
+  type: TType;
   x: number;
   y: number;
 };
 
-export type City = GridItem & { type: "city" };
-export type Trap = GridItem & { type: "trap" };
-export type Banner = GridItem & { type: "banner" };
-export type HeadQuarters = GridItem & { type: "headquarters" };
-export type Mine = GridItem & { type: "mine" };
-export type Obstruction = GridItem & { type: "obstruction" };
+type Mine = GridItem<'mine'> & {
+  resource: ResourceType;
+};
 
-export type ItemType = City | Trap | Banner | HeadQuarters | Mine | Obstruction;
+export type MapTile = Mine | GridItem<'mountain' | 'river' | "turret" | "castle" | "fort" | "sanctuary">
+export type KingshotMap = Array<MapTile>
+
+export type ItemType = GridItem<TileType> | Mine;
+
+export type PitfallMap = {
+  map: KingshotMap,
+
+  bearTrap: GridItem<'trap'>;
+  beartrap2: GridItem<'trap'>;
+
+  hq: GridItem<'headquarters'>;
+  banners: Array<GridItem<'banner'>>;
+  cities: Array<GridItem<'city'>>;
+}
+
+type TileData = { dx: number; dy: number, r: number, text: string, icon: string };
+
+export type QualifiedItem<T extends ItemType> = T & TileData;

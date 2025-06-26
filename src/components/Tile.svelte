@@ -12,7 +12,8 @@
     banner: 1,
     trap: 3,
     mine: 2,
-    obstruction: 1,
+    mountain: 1,
+    river: 1,
   };
 
   const coverageMap: Record<TileType, number> = {
@@ -21,7 +22,8 @@
     banner: 3,
     trap: 0,
     mine: 0,
-    obstruction: 0,
+    mountain: 0,
+    river: 0,
   };
 
   const nameMap: Record<TileType, string> = {
@@ -30,7 +32,8 @@
     banner: "⚑",
     trap: "Trap",
     mine: "Mine",
-    obstruction: "Obstruction",
+    mountain: "Mountain",
+    river: "River",
   };
 </script>
 

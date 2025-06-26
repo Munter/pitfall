@@ -3,9 +3,12 @@
   import { gridItems } from "../placement";
   import EditorForm from "./EditorForm.svelte";
   import type { EditorFormProps } from "../types/form";
+  import Map from "./Map.svelte";
+
+  import { kingdom129 } from "../maps/kingdom-129";
 
   let editorValue: EditorFormProps = {
-    isEditing: false,
+    isEditing: true,
     showCities: true,
     zoom: 100,
   };
@@ -29,6 +32,8 @@
       showCities={editorValue.showCities}
       zoom={editorValue.zoom}
     />
+
+    <Map kingshotMap={kingdom129} zoom={editorValue.zoom} />
   </div>
 </div>
 
