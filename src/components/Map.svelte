@@ -1,6 +1,10 @@
 <script lang="ts">
   import { TILE_SIZE } from "../constants";
-  import type { KingshotMap } from "../types/grid";
+  import type {
+    KingshotMap,
+    QualifiedItem,
+    MapTile as MapTileType,
+  } from "../types/grid";
   import { getTileData } from "../util/tileData";
   import MapTile from "./MapTile.svelte";
 
@@ -36,39 +40,41 @@
   let coords: { x: number; y: number } | null = null;
   let selectedTile: { x: number; y: number } | null = null;
 
+  $: hoverElement = coords ? findTileAtCoords(coords) : null;
+  $: selectedElement = selectedTile ? findTileAtCoords(selectedTile) : null;
+
   function mouseEventToMapCoords(e: MouseEvent): { x: number; y: number } {
     const mapElement = e.currentTarget as HTMLElement;
-    const scrollContainer = mapElement.parentElement as HTMLElement;
 
     const bounds = mapElement.getBoundingClientRect();
     const x = e.clientX - bounds.left;
     const y = e.clientY - bounds.top;
-
-    console.log({
-      boundLeft: bounds.left,
-      boundTop: bounds.top,
-      scrollLeft: scrollContainer.scrollLeft,
-      scrollTop: scrollContainer.scrollTop,
-      clientX: e.clientX,
-      clientY: e.clientY,
-      x,
-      y,
-    });
 
     const gridX = Math.floor(x / tileSize) + minX;
     const gridY = maxY - Math.floor(y / tileSize) - 1;
     return { x: gridX, y: gridY };
   }
 
-  function itemToOffset(item: { x: number; y: number; dy: number }) {
-    // console.table([
-    //   { x: item.x, y: item.y },
-    //   { x: item.x - minX, y: item.y - minY },
-    // ]);
+  function itemToOffset(item: { x: number; y: number }) {
     return {
       left: (item.x - minX) * tileSize,
       bottom: (item.y - minY) * tileSize,
     };
+  }
+
+  function findTileAtCoords(coords: {
+    x: number;
+    y: number;
+  }): QualifiedItem<MapTileType> | null {
+    return (
+      mapTiles.find(
+        (item) =>
+          item.x <= coords.x &&
+          item.x + item.dx > coords.x &&
+          item.y <= coords.y &&
+          item.y + item.dy > coords.y
+      ) || null
+    );
   }
 
   function handleMouseMove(e: MouseEvent) {
@@ -109,6 +115,38 @@
       on:mousemove={handleMouseMove}
       on:click={handleMouseClick}
     >
+      {#if hoverElement}
+        {@const { left, bottom } = itemToOffset(hoverElement)}
+        <div
+          class="highlight"
+          style:left={left + "px"}
+          style:bottom={bottom + "px"}
+          style:width={hoverElement.dx * tileSize - 2 + "px"}
+          style:height={hoverElement.dy * tileSize - 2 + "px"}
+        ></div>
+      {:else if coords}
+        {@const { left, bottom } = itemToOffset(coords)}
+        <div
+          class="highlight"
+          style:left={left + "px"}
+          style:bottom={bottom + "px"}
+          style:width={tileSize - 2 + "px"}
+          style:height={tileSize - 2 + "px"}
+        ></div>
+      {/if}
+
+      {#if selectedElement}
+        {@const { left, bottom } = itemToOffset(selectedElement)}
+        <div
+          class="highlight"
+          style:--highlight-color="#7ca1b9"
+          style:left={left + 1 + "px"}
+          style:bottom={bottom + 1 + "px"}
+          style:width={selectedElement.dx * tileSize - 4 + "px"}
+          style:height={selectedElement.dy * tileSize - 4 + "px"}
+        ></div>
+      {/if}
+
       {#each mapTiles as item, idx}
         <MapTile
           {...itemToOffset(item)}
@@ -121,6 +159,7 @@
     </div>
   </div>
 </div>
+}
 
 <style>
   .outer-container {
@@ -177,5 +216,15 @@
         transparent var(--tile-size)
       );
     background-repeat: repeat;
+  }
+
+  .highlight {
+    --color: var(--highlight-color, #9ecaed);
+    pointer-events: none;
+    position: absolute;
+    z-index: 10;
+    outline: none;
+    border: 1px solid var(--color);
+    box-shadow: 0 0 10px var(--color);
   }
 </style>
