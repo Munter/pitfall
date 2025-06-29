@@ -1,4 +1,4 @@
-import type { KingshotMap } from "../types/grid";
+import type { KingshotMap } from "../types/types";
 
 export const kingdom129: KingshotMap = [
   { type: 'castle', x: 597, y: 597 },

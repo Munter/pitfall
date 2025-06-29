@@ -1,35 +1,42 @@
 <script lang="ts">
+  import { onMount, tick } from "svelte";
   import { TILE_SIZE } from "../constants";
   import type {
     KingshotMap,
-    QualifiedItem,
-    MapTile as MapTileType,
-  } from "../types/grid";
+    TrapLayout,
+    Coordinate,
+    GridItem,
+  } from "../types/types";
+  import { layoutToMapTiles } from "../util/layout";
   import { getTileData } from "../util/tileData";
   import MapTile from "./MapTile.svelte";
 
   const gridPadding = 4; // Padding around the grid
 
+  export let trapCoords: Coordinate = [545, 476];
+  export let trapLayout: TrapLayout;
   export let kingshotMap: KingshotMap;
   export let zoom: number = 100; // Default zoom level
 
   $: tileSize = TILE_SIZE * (zoom / 100);
 
   const mapTiles = kingshotMap.map(getTileData);
+  const trapTiles = layoutToMapTiles(trapLayout, trapCoords);
+  const allTiles = [...trapTiles, ...mapTiles];
 
   const minX = Math.max(
-    Math.min(...mapTiles.map((item) => item.x - gridPadding)),
+    Math.min(...allTiles.map((item) => item.x - gridPadding)),
     0
   );
   const minY = Math.max(
-    Math.min(...mapTiles.map((item) => item.y - gridPadding)),
+    Math.min(...allTiles.map((item) => item.y - gridPadding)),
     0
   );
   const maxX = Math.max(
-    ...mapTiles.map((item) => item.x + item.dx + gridPadding)
+    ...allTiles.map((item) => item.x + item.dx + gridPadding)
   );
   const maxY = Math.max(
-    ...mapTiles.map((item) => item.y + item.dy + gridPadding)
+    ...allTiles.map((item) => item.y + item.dy + gridPadding)
   );
 
   const width = maxX - minX;
@@ -62,12 +69,9 @@
     };
   }
 
-  function findTileAtCoords(coords: {
-    x: number;
-    y: number;
-  }): QualifiedItem<MapTileType> | null {
+  function findTileAtCoords(coords: { x: number; y: number }): GridItem | null {
     return (
-      mapTiles.find(
+      allTiles.find(
         (item) =>
           item.x <= coords.x &&
           item.x + item.dx > coords.x &&
@@ -84,6 +88,22 @@
   function handleMouseClick(e: MouseEvent) {
     selectedTile = mouseEventToMapCoords(e);
   }
+
+  onMount(() => {
+    tick().then(() => {
+      // Ensure the map is scrolled to the trap container after mount
+      const trapEl = document
+        .querySelector(".trap-container")
+        ?.querySelector("[title='Trap']");
+      if (trapEl) {
+        const bounds = trapEl.getBoundingClientRect();
+        console.log(trapEl, bounds);
+        if (trapEl) {
+          trapEl.scrollIntoView({ block: "center", inline: "center" });
+        }
+      }
+    });
+  });
 </script>
 
 <div class="outer-container">
@@ -156,10 +176,23 @@
           isometric={false}
         />
       {/each}
+
+      {#if trapTiles.length > 0}
+        <div class="trap-container">
+          {#each trapTiles as item, idx}
+            <MapTile
+              {...itemToOffset(item)}
+              {item}
+              {tileSize}
+              {idx}
+              isometric={false}
+            />
+          {/each}
+        </div>
+      {/if}
     </div>
   </div>
 </div>
-}
 
 <style>
   .outer-container {
@@ -216,6 +249,10 @@
         transparent var(--tile-size)
       );
     background-repeat: repeat;
+  }
+
+  .trap-container {
+    opacity: 0.5;
   }
 
   .highlight {

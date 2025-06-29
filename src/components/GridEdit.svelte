@@ -6,6 +6,7 @@
   import Map from "./Map.svelte";
 
   import { kingdom129 } from "../maps/kingdom-129";
+  import { orthogonalPrio } from "../trapLayouts/orthoginal-prio";
 
   let editorValue: EditorFormProps = {
     isEditing: true,
@@ -26,27 +27,27 @@
   </aside>
 
   <div class="grid-container">
-    <Grid
+    <!-- <Grid
       items={gridItems}
       isometric={!editorValue.isEditing}
       showCities={editorValue.showCities}
       zoom={editorValue.zoom}
-    />
+    /> -->
 
-    <Map kingshotMap={kingdom129} zoom={editorValue.zoom} />
+    <Map
+      kingshotMap={kingdom129}
+      trapLayout={orthogonalPrio}
+      zoom={editorValue.zoom}
+    />
   </div>
 </div>
 
 <style>
   .grid-edit {
     display: grid;
+    height: 100%;
     grid-template-areas: "aside grid";
     grid-template-columns: 300px auto;
-  }
-
-  h2 {
-    grid-area: header;
-    padding: 5px 20px;
   }
   aside {
     grid-area: aside;

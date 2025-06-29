@@ -1,4 +1,4 @@
-import type { ItemType } from "./types/grid";
+import type { ItemType } from "./types/types";
 
 export const gridItems: ItemType[] = [
   {
@@ -7,7 +7,7 @@ export const gridItems: ItemType[] = [
     "y": 11
   },
   {
-    type: 'headquarters',
+    type: 'headquarter',
     x: 2,
     y: 2
   },

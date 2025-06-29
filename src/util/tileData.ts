@@ -1,11 +1,11 @@
-import type { ItemType, QualifiedItem } from "../types/grid";
+import type { ItemType, QualifiedItem } from "../types/types";
 
 
 export function getTileData<T extends ItemType>(item: T): QualifiedItem<T> {
   switch (item.type) {
     case "city":
       return { ...item, dx: 2, dy: 2, r: 0, text: "City", icon: '🏠' };
-    case "headquarters":
+    case "headquarter":
       return { ...item, dx: 3, dy: 3, r: 6, text: "Headquarters", icon: '🏢' };
     case "banner":
       return { ...item, dx: 1, dy: 1, r: 3, text: "Banner", icon: '⚑' };

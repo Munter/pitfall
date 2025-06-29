@@ -1,6 +1,6 @@
 <script lang="ts">
   import { TILE_SIZE } from "../constants";
-  import type { ItemType, QualifiedItem } from "../types/grid";
+  import type { ItemType, QualifiedItem } from "../types/types";
 
   export let tileSize = TILE_SIZE;
   export let item: QualifiedItem<ItemType>;

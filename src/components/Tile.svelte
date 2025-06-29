@@ -1,6 +1,6 @@
 <script lang="ts">
   import { TILE_SIZE } from "../constants";
-  import type { ItemType, TileType } from "../types/grid";
+  import type { ItemType, TileType } from "../types/types";
 
   export let item: ItemType;
   export let idx: number;
@@ -8,7 +8,7 @@
 
   const sizeMap: Record<TileType, number> = {
     city: 2,
-    headquarters: 3,
+    headquarter: 3,
     banner: 1,
     trap: 3,
     mine: 2,
@@ -18,7 +18,7 @@
 
   const coverageMap: Record<TileType, number> = {
     city: 0,
-    headquarters: 6,
+    headquarter: 6,
     banner: 3,
     trap: 0,
     mine: 0,
@@ -28,7 +28,7 @@
 
   const nameMap: Record<TileType, string> = {
     city: "City",
-    headquarters: "HQ",
+    headquarter: "HQ",
     banner: "⚑",
     trap: "Trap",
     mine: "Mine",
