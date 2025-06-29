@@ -22,7 +22,7 @@ export type ItemType = GridItem<TileType> | Mine;
 
 type TileData = { dx: number; dy: number, r: number, text: string, icon: string };
 
-export type QualifiedItem<T extends ItemType> = T & TileData;
+export type QualifiedItem<T extends ItemType = ItemType> = T & TileData;
 
 export type TrapLayout = {
   name: string;

@@ -6,9 +6,10 @@
     TrapLayout,
     Coordinate,
     GridItem,
+    QualifiedItem,
   } from "../types/types";
   import { layoutToMapTiles } from "../util/layout";
-  import { getTileData } from "../util/tileData";
+  import { getTileData, getTilesBounds } from "../util/tileData";
   import MapTile from "./MapTile.svelte";
 
   const gridPadding = 4; // Padding around the grid
@@ -24,31 +25,16 @@
   const trapTiles = layoutToMapTiles(trapLayout, trapCoords);
   const allTiles = [...trapTiles, ...mapTiles];
 
-  const minX = Math.max(
-    Math.min(...allTiles.map((item) => item.x - gridPadding)),
-    0
-  );
-  const minY = Math.max(
-    Math.min(...allTiles.map((item) => item.y - gridPadding)),
-    0
-  );
-  const maxX = Math.max(
-    ...allTiles.map((item) => item.x + item.dx + gridPadding)
-  );
-  const maxY = Math.max(
-    ...allTiles.map((item) => item.y + item.dy + gridPadding)
-  );
-
-  const width = maxX - minX;
-  const height = maxY - minY;
-
-  console.log({ minX, minY, maxX, maxY, width, height });
+  const mapBounds = getTilesBounds(mapTiles, 1);
+  const trapBounds = getTilesBounds(trapTiles);
 
   let coords: { x: number; y: number } | null = null;
   let selectedTile: { x: number; y: number } | null = null;
 
-  $: hoverElement = coords ? findTileAtCoords(coords) : null;
-  $: selectedElement = selectedTile ? findTileAtCoords(selectedTile) : null;
+  $: hoverElement = coords ? findTileAtCoords(coords, allTiles) : null;
+  $: selectedElement = selectedTile
+    ? findTileAtCoords(selectedTile, trapTiles)
+    : null;
 
   function mouseEventToMapCoords(e: MouseEvent): { x: number; y: number } {
     const mapElement = e.currentTarget as HTMLElement;
@@ -57,21 +43,27 @@
     const x = e.clientX - bounds.left;
     const y = e.clientY - bounds.top;
 
-    const gridX = Math.floor(x / tileSize) + minX;
-    const gridY = maxY - Math.floor(y / tileSize) - 1;
+    const gridX = Math.floor(x / tileSize) + mapBounds.minX;
+    const gridY = mapBounds.maxY - Math.floor(y / tileSize) - 1;
     return { x: gridX, y: gridY };
   }
 
   function itemToOffset(item: { x: number; y: number }) {
     return {
-      left: (item.x - minX) * tileSize,
-      bottom: (item.y - minY) * tileSize,
+      left: (item.x - mapBounds.minX) * tileSize,
+      bottom: (item.y - mapBounds.minY) * tileSize,
     };
   }
 
-  function findTileAtCoords(coords: { x: number; y: number }): GridItem | null {
+  function findTileAtCoords(
+    coords: {
+      x: number;
+      y: number;
+    },
+    tiles: QualifiedItem[]
+  ): QualifiedItem | null {
     return (
-      allTiles.find(
+      tiles.find(
         (item) =>
           item.x <= coords.x &&
           item.x + item.dx > coords.x &&
@@ -127,10 +119,10 @@
     <div
       class="map"
       style:--tile-size={tileSize + "px"}
-      style:--min-x={minX}
-      style:--min-y={minY}
-      style:width={width * tileSize + 1 + "px"}
-      style:height={height * tileSize + 1 + "px"}
+      style:--min-x={mapBounds.minX}
+      style:--min-y={mapBounds.minY}
+      style:width={mapBounds.width * tileSize + 1 + "px"}
+      style:height={mapBounds.height * tileSize + 1 + "px"}
       style:fontSize={tileSize + "px"}
       on:mousemove={handleMouseMove}
       on:click={handleMouseClick}

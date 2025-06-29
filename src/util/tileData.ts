@@ -43,3 +43,32 @@ export function getTileData<T extends ItemType>(item: T): QualifiedItem<T> {
       throw new Error(`Unknown tile type: ${item.type}`);
   }
 }
+
+
+export function getTilesBounds(tiles: QualifiedItem[], padding = 0): { width: number, height: number, minX: number; minY: number; maxX: number; maxY: number } {
+  if (tiles.length === 0) {
+    return { width: 0, height: 0, minX: 0, minY: 0, maxX: 0, maxY: 0 };
+  }
+
+  const minX = Math.max(
+    Math.min(...tiles.map((item) => item.x - padding)),
+    0
+  );
+  const minY = Math.max(
+    Math.min(...tiles.map((item) => item.y - padding)),
+    0
+  );
+  const maxX = Math.max(
+    ...tiles.map((item) => item.x + item.dx + padding)
+  );
+  const maxY = Math.max(
+    ...tiles.map((item) => item.y + item.dy + padding)
+  );
+
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  return {
+    width, height, maxX, maxY, minX, minY
+  };
+}
