@@ -50,14 +50,10 @@ export function getTilesBounds(tiles: QualifiedItem[], padding = 0): { width: nu
     return { width: 0, height: 0, minX: 0, minY: 0, maxX: 0, maxY: 0 };
   }
 
-  const minX = Math.max(
-    Math.min(...tiles.map((item) => item.x - padding)),
-    0
-  );
-  const minY = Math.max(
-    Math.min(...tiles.map((item) => item.y - padding)),
-    0
-  );
+  const minX = Math.min(...tiles.map((item) => item.x - padding))
+
+  const minY = Math.min(...tiles.map((item) => item.y - padding))
+
   const maxX = Math.max(
     ...tiles.map((item) => item.x + item.dx + padding)
   );

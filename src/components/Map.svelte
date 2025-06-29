@@ -14,27 +14,37 @@
 
   const gridPadding = 4; // Padding around the grid
 
-  export let trapCoords: Coordinate = [545, 476];
-  export let trapLayout: TrapLayout;
-  export let kingshotMap: KingshotMap;
-  export let zoom: number = 100; // Default zoom level
+  type Props = {
+    trapCoords?: Coordinate;
+    trapLayout: TrapLayout;
+    kingshotMap?: KingshotMap;
+    zoom?: number; // Zoom level for the map
+  };
 
-  $: tileSize = TILE_SIZE * (zoom / 100);
+  let {
+    trapCoords = [545, 476],
+    trapLayout,
+    kingshotMap = [],
+    zoom = 100,
+  }: Props = $props();
+
+  let tileSize = $derived(TILE_SIZE * (zoom / 100));
 
   const mapTiles = kingshotMap.map(getTileData);
-  const trapTiles = layoutToMapTiles(trapLayout, trapCoords);
-  const allTiles = [...trapTiles, ...mapTiles];
+  let trapTiles = $derived(layoutToMapTiles(trapLayout, trapCoords));
+  let allTiles = $derived([...trapTiles, ...mapTiles]);
 
-  const mapBounds = getTilesBounds(mapTiles, 1);
-  const trapBounds = getTilesBounds(trapTiles);
+  let mapBounds = $derived(getTilesBounds(allTiles, gridPadding));
 
-  let coords: { x: number; y: number } | null = null;
-  let selectedTile: { x: number; y: number } | null = null;
+  let coords: { x: number; y: number } | null = $state(null);
+  let selectedTile: { x: number; y: number } | null = $state(null);
 
-  $: hoverElement = coords ? findTileAtCoords(coords, allTiles) : null;
-  $: selectedElement = selectedTile
-    ? findTileAtCoords(selectedTile, trapTiles)
-    : null;
+  let hoverElement = $derived(
+    coords ? findTileAtCoords(coords, allTiles) : null
+  );
+  let selectedElement = $derived(
+    selectedTile ? findTileAtCoords(selectedTile, trapTiles) : null
+  );
 
   function mouseEventToMapCoords(e: MouseEvent): { x: number; y: number } {
     const mapElement = e.currentTarget as HTMLElement;
@@ -84,16 +94,10 @@
   onMount(() => {
     tick().then(() => {
       // Ensure the map is scrolled to the trap container after mount
-      const trapEl = document
+      document
         .querySelector(".trap-container")
-        ?.querySelector("[title='Trap']");
-      if (trapEl) {
-        const bounds = trapEl.getBoundingClientRect();
-        console.log(trapEl, bounds);
-        if (trapEl) {
-          trapEl.scrollIntoView({ block: "center", inline: "center" });
-        }
-      }
+        ?.querySelector("[title='Trap']")
+        ?.scrollIntoView({ block: "center", inline: "center" });
     });
   });
 </script>
@@ -124,8 +128,8 @@
       style:width={mapBounds.width * tileSize + 1 + "px"}
       style:height={mapBounds.height * tileSize + 1 + "px"}
       style:fontSize={tileSize + "px"}
-      on:mousemove={handleMouseMove}
-      on:click={handleMouseClick}
+      onmousemove={handleMouseMove}
+      onclick={handleMouseClick}
     >
       {#if hoverElement}
         {@const { left, bottom } = itemToOffset(hoverElement)}
@@ -221,6 +225,7 @@
     width: 100%;
     height: 100%;
     overflow: scroll;
+    display: grid;
   }
 
   .map {
