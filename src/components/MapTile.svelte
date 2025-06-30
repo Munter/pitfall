@@ -2,13 +2,23 @@
   import { TILE_SIZE } from "../constants";
   import type { ItemType, QualifiedItem } from "../types/types";
 
-  export let tileSize = TILE_SIZE;
-  export let item: QualifiedItem<ItemType>;
-  export let idx: number;
-  export let left: number;
-  export let bottom: number;
+  type Props = {
+    tileSize: number;
+    item: QualifiedItem<ItemType>;
+    idx?: number;
+    left: number;
+    bottom: number;
+    isometric: boolean;
+  };
 
-  export let isometric: boolean;
+  let {
+    tileSize = TILE_SIZE,
+    item,
+    idx,
+    left,
+    bottom,
+    isometric,
+  }: Props = $props();
 </script>
 
 <div

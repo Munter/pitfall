@@ -5,12 +5,13 @@
     KingshotMap,
     TrapLayout,
     Coordinate,
-    GridItem,
     QualifiedItem,
+    AllianceBuildingType,
   } from "../types/types";
   import { layoutToMapTiles } from "../util/layout";
   import { getTileData, getTilesBounds } from "../util/tileData";
   import MapTile from "./MapTile.svelte";
+  import { detectCollisions } from "../util/collisions";
 
   const gridPadding = 4; // Padding around the grid
 
@@ -19,6 +20,9 @@
     trapLayout: TrapLayout;
     kingshotMap?: KingshotMap;
     zoom?: number; // Zoom level for the map
+    placePreview?: AllianceBuildingType;
+    onPlace?: (coord: Coordinate) => void;
+    onRemove?: (coord: Coordinate) => void;
   };
 
   let {
@@ -26,6 +30,9 @@
     trapLayout,
     kingshotMap = [],
     zoom = 100,
+    placePreview,
+    onPlace,
+    onRemove,
   }: Props = $props();
 
   let tileSize = $derived(TILE_SIZE * (zoom / 100));
@@ -45,6 +52,16 @@
   let selectedElement = $derived(
     selectedTile ? findTileAtCoords(selectedTile, trapTiles) : null
   );
+  let previewTile = $derived(
+    coords && placePreview
+      ? getTileData(Object.assign({}, coords, { type: placePreview }))
+      : null
+  );
+  let previewCollisions = $derived(detectCollisions(previewTile, trapTiles));
+  let collisions = $derived([
+    ...detectCollisions(trapTiles, mapTiles),
+    ...previewCollisions,
+  ]);
 
   function mouseEventToMapCoords(e: MouseEvent): { x: number; y: number } {
     const mapElement = e.currentTarget as HTMLElement;
@@ -87,8 +104,21 @@
     coords = mouseEventToMapCoords(e);
   }
 
-  function handleMouseClick(e: MouseEvent) {
-    selectedTile = mouseEventToMapCoords(e);
+  function handleMouseDown(e: MouseEvent) {
+    const coords = mouseEventToMapCoords(e);
+    if (placePreview) {
+      if (previewCollisions.length === 0 && onPlace) {
+        onPlace([coords.x, coords.y]);
+      } else {
+        const tile = findTileAtCoords(coords, trapTiles);
+
+        if (tile && tile.type === placePreview && onRemove) {
+          onRemove([coords.x, coords.y]);
+        }
+      }
+    } else {
+      selectedTile = coords;
+    }
   }
 
   onMount(() => {
@@ -129,7 +159,7 @@
       style:height={mapBounds.height * tileSize + 1 + "px"}
       style:fontSize={tileSize + "px"}
       onmousemove={handleMouseMove}
-      onclick={handleMouseClick}
+      onmousedown={handleMouseDown}
     >
       {#if hoverElement}
         {@const { left, bottom } = itemToOffset(hoverElement)}
@@ -140,7 +170,7 @@
           style:width={hoverElement.dx * tileSize - 2 + "px"}
           style:height={hoverElement.dy * tileSize - 2 + "px"}
         ></div>
-      {:else if coords}
+      {:else if coords && !placePreview}
         {@const { left, bottom } = itemToOffset(coords)}
         <div
           class="highlight"
@@ -184,8 +214,33 @@
               isometric={false}
             />
           {/each}
+
+          <div class="preview">
+            {#if previewTile}
+              <MapTile
+                {...itemToOffset(previewTile)}
+                item={previewTile}
+                {tileSize}
+                isometric={false}
+              />
+            {/if}
+          </div>
         </div>
       {/if}
+
+      <div class="collisions">
+        {#each collisions as coord}
+          {@const { left, bottom } = itemToOffset({ x: coord[0], y: coord[1] })}
+          <div
+            class="highlight"
+            style:--highlight-color="red"
+            style:left={left + 1 + "px"}
+            style:bottom={bottom + 1 + "px"}
+            style:width={tileSize - 2 + "px"}
+            style:height={tileSize - 2 + "px"}
+          ></div>
+        {/each}
+      </div>
     </div>
   </div>
 </div>
@@ -249,6 +304,10 @@
   }
 
   .trap-container {
+    opacity: 1;
+  }
+
+  .preview {
     opacity: 0.5;
   }
 
@@ -260,5 +319,6 @@
     outline: none;
     border: 1px solid var(--color);
     box-shadow: 0 0 10px var(--color);
+    pointer-events: none;
   }
 </style>
