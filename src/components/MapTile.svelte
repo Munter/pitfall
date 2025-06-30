@@ -40,7 +40,7 @@
       </div>
       <code>({item.x},{item.y})</code>
     {:else if item.type === "trap"}
-      <div>{item.icon}</div>
+      <div style:font-size="400%">{item.icon}</div>
       <code>({item.x},{item.y})</code>
     {:else}
       {item.icon}
