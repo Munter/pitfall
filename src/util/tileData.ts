@@ -1,4 +1,4 @@
-import type { Coordinate, ItemType, QualifiedItem } from "../types/types";
+import type { Coordinate, ItemType, Mine, QualifiedItem } from "../types/types";
 
 export function getTileData<T extends ItemType>(
   item: T,
@@ -17,9 +17,10 @@ export function getTileData<T extends ItemType>(
     case "trap":
       return { ...item, dx: 3, dy: 3, r: 0, text: "Trap", icon: "🧸" };
     case "mine": {
+      const i = item as Mine;
       const base = { dx: 2, dy: 2, r: 0 };
 
-      switch (item.resource) {
+      switch (i.resource) {
         case "wood":
           return { ...item, ...base, text: "Alliance Woodmill", icon: "🪵" };
         case "stone":
@@ -30,7 +31,7 @@ export function getTileData<T extends ItemType>(
           return { ...item, ...base, text: "ALliance Mill", icon: "🍞" };
       }
 
-      throw new Error(`Unknown resource type: ${item.resource}`);
+      throw new Error(`Unknown resource type: ${i.resource}`);
     }
     case "mountain":
       return { ...item, dx: 1, dy: 1, r: 0, text: "Mountain", icon: "⛰" };
@@ -45,7 +46,7 @@ export function getTileData<T extends ItemType>(
     case "sanctuary":
       return { ...item, dx: 6, dy: 6, r: 0, text: "Sanctuary", icon: "⛪" };
     default:
-      throw new Error(`Unknown tile type: ${item.type}`);
+      throw new Error(`Unknown tile type: ${(item as any).type}`);
   }
 }
 
@@ -82,8 +83,4 @@ export function getTilesBounds(
     minX,
     minY,
   };
-}
-
-function getCityDistance(offset: Coordinate): number {
-  return Math.sqrt();
 }

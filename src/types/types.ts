@@ -20,7 +20,7 @@ export type GridItem<TType extends TileType = TileType> = VerboseCoordinate & {
   type: TType;
 };
 
-type Mine = GridItem<"mine"> & {
+export type Mine = GridItem<"mine"> & {
   resource: ResourceType;
 };
 
