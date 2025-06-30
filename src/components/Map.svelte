@@ -171,6 +171,7 @@
       style:--min-y={mapBounds.minY}
       style:width={mapBounds.width * tileSize + 1 + "px"}
       style:height={mapBounds.height * tileSize + 1 + "px"}
+      style:font-size={zoom / 1.8 + "%"}
       onmousemove={handleMouseMove}
       onmousedown={handleMouseDown}
     >

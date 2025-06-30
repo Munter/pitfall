@@ -26,10 +26,10 @@
 <div
   class="grid-item"
   title={item.text}
-  style:left={left + "px"}
-  style:bottom={bottom + "px"}
-  style:width={item.dx * tileSize - 2 + "px"}
-  style:height={item.dy * tileSize - 2 + "px"}
+  style:left={left + 2 + "px"}
+  style:bottom={bottom + 2 + "px"}
+  style:width={item.dx * tileSize - 5 + "px"}
+  style:height={item.dy * tileSize - 5 + "px"}
   style:outline-width={item.r * tileSize + "px"}
   class:isometric
 >
@@ -55,7 +55,7 @@
     justify-content: center;
     align-items: center;
     background-color: white;
-    border: 1px solid black;
+    border: 1px solid #aaa;
     outline-color: rgba(0, 0, 255, 0.05);
     outline-style: solid;
     overflow: hidden;
