@@ -4,7 +4,7 @@
   import { TILE_SIZE } from "../constants";
 
   const formSchema = z.object({
-    isEditing: z.coerce.boolean().optional().default(false),
+    isometric: z.coerce.boolean().optional().default(false),
     showCities: z.coerce.boolean().optional().default(false),
     zoom: z.coerce
       .number()
@@ -16,7 +16,7 @@
   });
 
   export let values: EditorFormProps = {
-    isEditing: false,
+    isometric: false,
     showCities: true,
     zoom: TILE_SIZE,
   };
@@ -42,8 +42,8 @@
 
 <form on:input={handleChange}>
   <label class="checkbox">
-    <input type="checkbox" name="isEditing" bind:checked={values.isEditing} />
-    EditMode
+    <input type="checkbox" name="isometric" bind:checked={values.isometric} />
+    Isometric
   </label>
 
   <label class="checkbox">

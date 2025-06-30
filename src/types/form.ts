@@ -1,5 +1,5 @@
 export type EditorFormProps = {
-  isEditing?: boolean;
+  isometric?: boolean;
   showCities?: boolean;
   zoom?: number;
 };

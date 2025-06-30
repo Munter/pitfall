@@ -12,6 +12,7 @@
     TrapLayout,
   } from "../types/types";
   import { wheel } from "../trapLayouts/wheel";
+  import { cityStore, layoutStore } from "../stores/stores";
 
   const cleanTrapLayout: TrapLayout = {
     cities: [],
@@ -19,34 +20,45 @@
   };
 
   let editorValue: EditorFormProps = $state({
-    isEditing: true,
+    isometric: false,
     showCities: true,
     zoom: 200,
   });
 
-  let trapLayout = $state(wheel);
-  let bearX = $state(wheel.trap?.[0] ?? 0);
-  let bearY = $state(wheel.trap?.[1] ?? 0);
+  layoutStore.set(wheel);
+
+  const cities = $cityStore;
+
+  let bearX = $state($layoutStore.trap?.[0] ?? 0);
+  let bearY = $state($layoutStore.trap?.[1] ?? 0);
   let trapCoords = $derived<Coordinate>([bearX, bearY]);
   let editType = $state<AllianceBuildingType | undefined>(undefined);
+  let namesInput = $state("");
+  let names = $derived(
+    namesInput
+      .trim()
+      .split(/\n+/)
+      .map((n) => n.trim())
+      .filter(Boolean)
+  );
 
   function rotate(direction: "left" | "right") {
     if (direction === "left") {
-      trapLayout = rotateLeft(trapLayout);
+      layoutStore.set(rotateLeft($layoutStore));
     } else {
-      trapLayout = rotateRight(trapLayout);
+      layoutStore.set(rotateRight($layoutStore));
     }
   }
 
   $effect(() => {
-    // console.log(JSON.stringify(trapLayout));
+    // console.log(JSON.stringify($layoutStore));
   });
 
   function flip(axis: "horizontal" | "vertical") {
     if (axis === "horizontal") {
-      trapLayout = flipX(trapLayout);
+      layoutStore.set(flipX($layoutStore));
     } else if (axis === "vertical") {
-      trapLayout = flipY(trapLayout);
+      layoutStore.set(flipY($layoutStore));
     }
   }
 
@@ -71,19 +83,22 @@
     if (editType) {
       switch (editType) {
         case "city":
-          trapLayout = { ...trapLayout, cities: [...trapLayout.cities, coord] };
+          layoutStore.set({
+            ...$layoutStore,
+            cities: [...$layoutStore.cities, coord],
+          });
           break;
         case "headquarter":
-          trapLayout = { ...trapLayout, headquarter: coord };
+          layoutStore.set({ ...$layoutStore, headquarter: coord });
           break;
         case "banner":
-          trapLayout = {
-            ...trapLayout,
-            banners: [...trapLayout.banners, coord],
-          };
+          layoutStore.set({
+            ...$layoutStore,
+            banners: [...$layoutStore.banners, coord],
+          });
           break;
         case "trap":
-          trapLayout = { ...trapLayout };
+          layoutStore.set({ ...$layoutStore });
           break;
       }
     }
@@ -97,25 +112,29 @@
     if (editType) {
       switch (editType) {
         case "city":
-          trapLayout = {
-            ...trapLayout,
-            cities: trapLayout.cities.filter((c) => !isSameCoord(c, coord)),
-          };
+          layoutStore.set({
+            ...$layoutStore,
+            cities: $layoutStore.cities.filter((c) => !isSameCoord(c, coord)),
+          });
           break;
         case "headquarter":
-          trapLayout = { ...trapLayout, headquarter: undefined };
+          layoutStore.set({ ...$layoutStore, headquarter: undefined });
           break;
         case "banner":
-          trapLayout = {
-            ...trapLayout,
-            banners: trapLayout.banners.filter((b) => !isSameCoord(b, coord)),
-          };
+          layoutStore.set({
+            ...$layoutStore,
+            banners: $layoutStore.banners.filter((b) => !isSameCoord(b, coord)),
+          });
           break;
         case "trap":
-          trapLayout = { ...trapLayout };
+          layoutStore.set({ ...$layoutStore });
           break;
       }
     }
+  }
+
+  function handleReset() {
+    layoutStore.set(wheel);
   }
 </script>
 
@@ -131,12 +150,10 @@
       }}
     />
 
-    <label>Trap X<input type="number" bind:value={bearX} /></label>
-    <label>Trap Y<input type="number" bind:value={bearY} /></label>
+    <div><label>Trap X<input type="number" bind:value={bearX} /></label></div>
+    <div><label>Trap Y<input type="number" bind:value={bearY} /></label></div>
 
-    <button onclick={() => (trapLayout = orthogonalPrio)}>
-      Reset Trap Layout
-    </button>
+    <button onclick={handleReset}> Reset Trap Layout </button>
     <button onclick={() => rotate("left")}> Rotate left </button>
     <button onclick={() => rotate("right")}> Rotate right </button>
     <button onclick={() => flip("horizontal")}> Flip X</button>
@@ -171,22 +188,32 @@
 
     <hr />
 
-    <button onclick={() => (trapLayout = cleanTrapLayout)}>Clear</button>
+    <button onclick={() => layoutStore.set(cleanTrapLayout)}>Clear</button>
     <button
-      onclick={() => navigator.clipboard.writeText(JSON.stringify(trapLayout))}
+      onclick={() =>
+        navigator.clipboard.writeText(JSON.stringify($layoutStore))}
       >Copy</button
     >
+
+    <hr />
+
+    <label
+      >Names, one per line
+      <textarea name="names" bind:value={namesInput}></textarea>
+    </label>
   </aside>
 
   <div class="grid-container">
     <Map
       kingshotMap={kingdom129}
-      {trapLayout}
+      trapLayout={$layoutStore}
       {trapCoords}
       zoom={editorValue.zoom}
       placePreview={editType}
       onPlace={handleTilePlacement}
       onRemove={handleTileRemoval}
+      isometric={editorValue.isometric}
+      {names}
     />
   </div>
 </div>
@@ -203,6 +230,16 @@
     background-color: #f0f0f0;
     padding: 1rem;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+
+    h3 {
+      margin: 0;
+    }
+
+    & > * + * {
+      margin-top: 10px;
+    }
   }
 
   .grid-container {
@@ -211,5 +248,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  label:has(textarea) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    textarea {
+      padding: 5px;
+      flex: 1;
+    }
   }
 </style>

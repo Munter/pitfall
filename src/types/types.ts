@@ -35,6 +35,8 @@ type TileData = {
   r: number;
   text: string;
   icon: string;
+  playerName?: string;
+  distance?: number;
 };
 
 export type QualifiedItem<T extends ItemType = ItemType> = T & TileData;

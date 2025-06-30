@@ -12,6 +12,7 @@
   import { getTileData, getTilesBounds } from "../util/tileData";
   import MapTile from "./MapTile.svelte";
   import { detectCollisions } from "../util/collisions";
+  import { cityStore } from "../stores/stores";
 
   const gridPadding = 4; // Padding around the grid
 
@@ -23,6 +24,8 @@
     placePreview?: AllianceBuildingType;
     onPlace?: (coord: Coordinate) => void;
     onRemove?: (coord: Coordinate) => void;
+    isometric?: boolean;
+    names?: string[];
   };
 
   let {
@@ -33,11 +36,13 @@
     placePreview,
     onPlace,
     onRemove,
+    isometric = true,
+    names = [],
   }: Props = $props();
 
   let tileSize = $derived(TILE_SIZE * (zoom / 100));
 
-  const mapTiles = kingshotMap.map(getTileData);
+  const mapTiles = kingshotMap.map((t) => getTileData(t));
   let trapTiles = $derived(layoutToMapTiles(trapLayout, trapCoords));
   let allTiles = $derived([...trapTiles, ...mapTiles]);
 
@@ -130,6 +135,14 @@
         ?.scrollIntoView({ block: "center", inline: "center" });
     });
   });
+  $effect(() => {
+    isometric;
+    // Ensure the map is scrolled to the trap container after mount
+    document
+      .querySelector(".trap-container")
+      ?.querySelector("[title='Trap']")
+      ?.scrollIntoView({ block: "center", inline: "center" });
+  });
 </script>
 
 <div class="outer-container">
@@ -152,12 +165,12 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
       class="map"
+      style:transform={isometric ? "rotate(-45deg) skew(10deg, 10deg)" : "none"}
       style:--tile-size={tileSize + "px"}
       style:--min-x={mapBounds.minX}
       style:--min-y={mapBounds.minY}
       style:width={mapBounds.width * tileSize + 1 + "px"}
       style:height={mapBounds.height * tileSize + 1 + "px"}
-      style:fontSize={tileSize + "px"}
       onmousemove={handleMouseMove}
       onmousedown={handleMouseDown}
     >
@@ -194,24 +207,28 @@
       {/if}
 
       {#each mapTiles as item, idx}
-        <MapTile
-          {...itemToOffset(item)}
-          {item}
-          {tileSize}
-          {idx}
-          isometric={false}
-        />
+        <MapTile {...itemToOffset(item)} {item} {tileSize} {idx} {isometric} />
       {/each}
 
       {#if trapTiles.length > 0}
         <div class="trap-container">
-          {#each trapTiles as item, idx}
+          {#each trapTiles.filter((t) => t.type !== "city") as item, idx}
             <MapTile
               {...itemToOffset(item)}
               {item}
               {tileSize}
               {idx}
-              isometric={false}
+              {isometric}
+            />
+          {/each}
+          {#each $cityStore as city, idx}
+            <MapTile
+              {...itemToOffset(city)}
+              item={city}
+              {tileSize}
+              {idx}
+              {isometric}
+              name={names?.[idx]}
             />
           {/each}
 
@@ -221,7 +238,7 @@
                 {...itemToOffset(previewTile)}
                 item={previewTile}
                 {tileSize}
-                isometric={false}
+                {isometric}
               />
             {/if}
           </div>
@@ -286,7 +303,8 @@
   .map {
     --grid-line-color: #cce;
     position: absolute;
-    background-image: repeating-linear-gradient(
+    background-image:
+      repeating-linear-gradient(
         0deg,
         transparent,
         var(--grid-line-color) 1px,
