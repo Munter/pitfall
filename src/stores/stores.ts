@@ -18,9 +18,10 @@ export const cityStore = derived(layoutStore, (layout) => {
       type: "city",
       ...relativeCoordToAbsolute(layout.trap ?? trap1Center, [x, y]),
     });
+
     const cityCenter = [x + data.dx / 2, y + data.dy / 2];
 
-    const bearCenter = getBearCenter(layout.trap ?? trap1Center);
+    const bearCenter = getBearCenter(trap1Center);
     const distance = Math.sqrt(
       Math.pow(cityCenter[0] - bearCenter[0], 2) +
         Math.pow(cityCenter[1] - bearCenter[1], 2),

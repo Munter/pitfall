@@ -1,3 +1,4 @@
+import { z } from "zod";
 import type {
   Coordinate,
   TrapLayout,
@@ -70,6 +71,7 @@ export function rotateLeft(layout: TrapLayout): TrapLayout {
   const rotatedLayout: TrapLayout = {
     name: layout.name,
     description: layout.description,
+    trap: layout.trap,
     trap2: layout.trap2 ? [-layout.trap2[1], layout.trap2[0]] : undefined,
     headquarter: layout.headquarter
       ? [-layout.headquarter[1], layout.headquarter[0]]
@@ -85,6 +87,7 @@ export function rotateRight(layout: TrapLayout): TrapLayout {
   const rotatedLayout: TrapLayout = {
     name: layout.name,
     description: layout.description,
+    trap: layout.trap,
     trap2: layout.trap2 ? [layout.trap2[1], -layout.trap2[0]] : undefined,
     headquarter: layout.headquarter
       ? [layout.headquarter[1], -layout.headquarter[0]]
@@ -100,6 +103,7 @@ export function flipX(layout: TrapLayout): TrapLayout {
   const flippedLayout: TrapLayout = {
     name: layout.name,
     description: layout.description,
+    trap: layout.trap,
     trap2: layout.trap2 ? [-layout.trap2[0], layout.trap2[1]] : undefined,
     headquarter: layout.headquarter
       ? [-layout.headquarter[0], layout.headquarter[1]]
@@ -115,6 +119,7 @@ export function flipY(layout: TrapLayout): TrapLayout {
   const flippedLayout: TrapLayout = {
     name: layout.name,
     description: layout.description,
+    trap: layout.trap,
     trap2: layout.trap2 ? [layout.trap2[0], -layout.trap2[1]] : undefined,
     headquarter: layout.headquarter
       ? [layout.headquarter[0], -layout.headquarter[1]]
@@ -125,3 +130,14 @@ export function flipY(layout: TrapLayout): TrapLayout {
 
   return flippedLayout;
 }
+
+const CoordinateSchema = z.tuple([z.number().int(), z.number().int()]);
+export const LayoutSchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  trap: CoordinateSchema,
+  trap2: CoordinateSchema.optional(),
+  headquarter: CoordinateSchema.optional(),
+  banners: z.array(CoordinateSchema),
+  cities: z.array(CoordinateSchema),
+});

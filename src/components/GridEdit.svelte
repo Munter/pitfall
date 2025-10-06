@@ -25,8 +25,6 @@
     zoom: 200,
   });
 
-  layoutStore.set(wheel);
-
   let bearX = $state($layoutStore.trap?.[0] ?? 0);
   let bearY = $state($layoutStore.trap?.[1] ?? 0);
   let trapCoords = $derived<Coordinate>([bearX, bearY]);
@@ -49,7 +47,21 @@
   }
 
   $effect(() => {
-    // console.log(JSON.stringify($layoutStore));
+    if (
+      bearX !== ($layoutStore.trap?.[0] ?? 0) ||
+      bearY !== ($layoutStore.trap?.[1] ?? 0)
+    ) {
+      layoutStore.set({
+        ...$layoutStore,
+        trap: [bearX, bearY],
+      });
+    }
+  });
+
+  $effect(() => {
+    const location = new URL(window.location.href);
+    location.searchParams.set("layout", JSON.stringify($layoutStore));
+    window.history.replaceState({}, "", location.href);
   });
 
   function flip(axis: "horizontal" | "vertical") {
@@ -154,8 +166,12 @@
       }}
     />
 
-    <div><label>Trap X<input type="number" bind:value={bearX} /></label></div>
-    <div><label>Trap Y<input type="number" bind:value={bearY} /></label></div>
+    <fieldset>
+      <legend>Trap 1 Position</legend>
+
+      <label>X<input type="number" bind:value={bearX} width="5" /></label>
+      <label>Y<input type="number" bind:value={bearY} /></label>
+    </fieldset>
 
     <button onclick={handleReset}> Reset Trap Layout </button>
     <button onclick={() => rotate("left")}> Rotate left </button>

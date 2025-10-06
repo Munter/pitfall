@@ -14,7 +14,7 @@
   import { detectCollisions } from "../util/collisions";
   import { cityStore } from "../stores/stores";
 
-  const gridPadding = 4; // Padding around the grid
+  const gridPadding = 16; // Padding around the grid
 
   type Props = {
     trapCoords?: Coordinate;
@@ -136,16 +136,9 @@
       // Ensure the map is scrolled to the trap container after mount
       document
         .querySelector(".trap-container")
-        ?.querySelector("[title='Trap']")
+        ?.querySelector("[title='Trap 1']")
         ?.scrollIntoView({ block: "center", inline: "center" });
     });
-  });
-  $effect(() => {
-    // Ensure the map is scrolled to the trap container after mount
-    document
-      .querySelector(".trap-container")
-      ?.querySelector("[title='Trap']")
-      ?.scrollIntoView({ block: "center", inline: "center" });
   });
 </script>
 

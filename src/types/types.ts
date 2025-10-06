@@ -50,7 +50,7 @@ export type TrapLayout = {
   name?: string;
   description?: string;
 
-  trap?: Coordinate;
+  trap: Coordinate;
   trap2?: Coordinate;
   headquarter?: Coordinate;
   banners: Array<Coordinate>;
