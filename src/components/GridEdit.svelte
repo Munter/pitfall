@@ -12,7 +12,7 @@
     TrapLayout,
   } from "../types/types";
   import { wheel } from "../trapLayouts/wheel";
-  import { cityStore, layoutStore } from "../stores/stores";
+  import { layoutStore } from "../stores/stores";
 
   const cleanTrapLayout: TrapLayout = {
     cities: [],
@@ -26,8 +26,6 @@
   });
 
   layoutStore.set(wheel);
-
-  const cities = $cityStore;
 
   let bearX = $state($layoutStore.trap?.[0] ?? 0);
   let bearY = $state($layoutStore.trap?.[1] ?? 0);
@@ -73,6 +71,9 @@
       case "h":
         editType = "headquarter";
         break;
+      case "t":
+        editType = "trap2";
+        break;
       case "Escape":
         editType = undefined;
         break;
@@ -98,7 +99,10 @@
           });
           break;
         case "trap":
-          layoutStore.set({ ...$layoutStore });
+          layoutStore.set({ ...$layoutStore, trap: coord });
+          break;
+        case "trap2":
+          layoutStore.set({ ...$layoutStore, trap2: coord });
           break;
       }
     }
@@ -126,8 +130,8 @@
             banners: $layoutStore.banners.filter((b) => !isSameCoord(b, coord)),
           });
           break;
-        case "trap":
-          layoutStore.set({ ...$layoutStore });
+        case "trap2":
+          layoutStore.set({ ...$layoutStore, trap2: undefined });
           break;
       }
     }
@@ -160,6 +164,14 @@
     <button onclick={() => flip("vertical")}> Flip Y</button>
 
     <fieldset>
+      <label
+        ><input
+          type="radio"
+          name="type"
+          value="trap2"
+          bind:group={editType}
+        />Trap 2</label
+      >
       <label
         ><input
           type="radio"
@@ -205,7 +217,6 @@
 
   <div class="grid-container">
     <Map
-      kingshotMap={kingdom129}
       trapLayout={$layoutStore}
       {trapCoords}
       zoom={editorValue.zoom}

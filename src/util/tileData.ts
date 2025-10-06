@@ -15,7 +15,9 @@ export function getTileData<T extends ItemType>(
     case "banner":
       return { ...item, dx: 1, dy: 1, r: 3, text: "Banner", icon: "⚑" };
     case "trap":
-      return { ...item, dx: 3, dy: 3, r: 0, text: "Trap", icon: "🧸" };
+      return { ...item, dx: 3, dy: 3, r: 0, text: "Trap 1", icon: "🧸" };
+    case "trap2":
+      return { ...item, dx: 3, dy: 3, r: 0, text: "Trap 2", icon: "🧸" };
     case "mine": {
       const i = item as Mine;
       const base = { dx: 2, dy: 2, r: 0 };

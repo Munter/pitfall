@@ -111,14 +111,19 @@
 
   function handleMouseDown(e: MouseEvent) {
     const coords = mouseEventToMapCoords(e);
+    const relativeCoords = [
+      coords.x - trapCoords[0],
+      coords.y - trapCoords[1],
+    ] as Coordinate;
+
     if (placePreview) {
       if (previewCollisions.length === 0 && onPlace) {
-        onPlace([coords.x, coords.y]);
+        onPlace(relativeCoords);
       } else {
         const tile = findTileAtCoords(coords, trapTiles);
 
         if (tile && tile.type === placePreview && onRemove) {
-          onRemove([coords.x, coords.y]);
+          onRemove(relativeCoords);
         }
       }
     } else {
@@ -136,7 +141,6 @@
     });
   });
   $effect(() => {
-    isometric;
     // Ensure the map is scrolled to the trap container after mount
     document
       .querySelector(".trap-container")

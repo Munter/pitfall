@@ -1,4 +1,9 @@
-export type AllianceBuildingType = "city" | "headquarter" | "banner" | "trap";
+export type AllianceBuildingType =
+  | "city"
+  | "headquarter"
+  | "banner"
+  | "trap"
+  | "trap2";
 export type MapTileType =
   | "mine"
   | "mountain"
@@ -46,6 +51,7 @@ export type TrapLayout = {
   description?: string;
 
   trap?: Coordinate;
+  trap2?: Coordinate;
   headquarter?: Coordinate;
   banners: Array<Coordinate>;
   cities: Array<Coordinate>;

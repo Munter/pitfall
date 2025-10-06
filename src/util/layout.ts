@@ -12,8 +12,16 @@ export function layoutToMapTiles(
 ): TrapMap {
   const map: TrapMap = [];
 
-  // Add the trap
+  // Add the traps
   map.push(getTileData({ type: "trap", x: trapCoord[0], y: trapCoord[1] }));
+  if (layout.trap2) {
+    map.push(
+      getTileData({
+        type: "trap",
+        ...relativeCoordToAbsolute(trapCoord, layout.trap2),
+      }),
+    );
+  }
 
   // Add the headquarters
   if (layout.headquarter) {
@@ -62,6 +70,7 @@ export function rotateLeft(layout: TrapLayout): TrapLayout {
   const rotatedLayout: TrapLayout = {
     name: layout.name,
     description: layout.description,
+    trap2: layout.trap2 ? [-layout.trap2[1], layout.trap2[0]] : undefined,
     headquarter: layout.headquarter
       ? [-layout.headquarter[1], layout.headquarter[0]]
       : undefined,
@@ -76,6 +85,7 @@ export function rotateRight(layout: TrapLayout): TrapLayout {
   const rotatedLayout: TrapLayout = {
     name: layout.name,
     description: layout.description,
+    trap2: layout.trap2 ? [layout.trap2[1], -layout.trap2[0]] : undefined,
     headquarter: layout.headquarter
       ? [layout.headquarter[1], -layout.headquarter[0]]
       : undefined,
@@ -90,6 +100,7 @@ export function flipX(layout: TrapLayout): TrapLayout {
   const flippedLayout: TrapLayout = {
     name: layout.name,
     description: layout.description,
+    trap2: layout.trap2 ? [-layout.trap2[0], layout.trap2[1]] : undefined,
     headquarter: layout.headquarter
       ? [-layout.headquarter[0], layout.headquarter[1]]
       : undefined,
@@ -104,6 +115,7 @@ export function flipY(layout: TrapLayout): TrapLayout {
   const flippedLayout: TrapLayout = {
     name: layout.name,
     description: layout.description,
+    trap2: layout.trap2 ? [layout.trap2[0], -layout.trap2[1]] : undefined,
     headquarter: layout.headquarter
       ? [layout.headquarter[0], -layout.headquarter[1]]
       : undefined,
