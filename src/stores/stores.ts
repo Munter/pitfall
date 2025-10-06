@@ -11,7 +11,7 @@ export const layoutStore = writable<TrapLayout>();
 
 export const cityStore = derived(layoutStore, (layout) => {
   const trap1Center: Coordinate = [0, 0];
-  const trap2Center = layout.trap2;
+  // const trap2Center = layout.trap2;
 
   const result = layout.cities.map(([x, y]) => {
     const data = getTileData({

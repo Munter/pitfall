@@ -1,9 +1,6 @@
-import type { Coordinate, ItemType, Mine, QualifiedItem } from "../types/types";
+import type { ItemType, Mine, QualifiedItem } from "../types/types";
 
-export function getTileData<T extends ItemType>(
-  item: T,
-  bearCoords?: Coordinate,
-): QualifiedItem<T> {
+export function getTileData<T extends ItemType>(item: T): QualifiedItem<T> {
   switch (item.type) {
     case "city": {
       const city = { ...item, dx: 2, dy: 2, r: 0, text: "City", icon: "🏠" };
@@ -31,9 +28,9 @@ export function getTileData<T extends ItemType>(
           return { ...item, ...base, text: "Alliance Iron Mine", icon: "⛏️" };
         case "bread":
           return { ...item, ...base, text: "ALliance Mill", icon: "🍞" };
+        default:
+          throw new Error(`Unknown resource type: ${i.resource}`);
       }
-
-      throw new Error(`Unknown resource type: ${i.resource}`);
     }
     case "mountain":
       return { ...item, dx: 1, dy: 1, r: 0, text: "Mountain", icon: "⛰" };
