@@ -17,7 +17,7 @@ export function layoutToMapTiles(
   if (layout.trap2) {
     map.push(
       getTileData({
-        type: "trap",
+        type: "trap2",
         ...relativeCoordToAbsolute(trapCoord, layout.trap2),
       }),
     );
