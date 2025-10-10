@@ -13,6 +13,7 @@
   } from "../types/types";
   import { wheel } from "../trapLayouts/wheel";
   import { layoutStore } from "../stores/stores";
+  import { nfg } from "../trapLayouts/nfg";
 
   const cleanTrapLayout: TrapLayout = {
     cities: [],
@@ -150,7 +151,7 @@
   }
 
   function handleReset() {
-    layoutStore.set(wheel);
+    layoutStore.set(nfg);
   }
 </script>
 
@@ -233,6 +234,7 @@
 
   <div class="grid-container">
     <Map
+      kingshotMap={kingdom129}
       trapLayout={$layoutStore}
       {trapCoords}
       zoom={editorValue.zoom}
