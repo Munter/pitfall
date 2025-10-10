@@ -16,6 +16,7 @@
   import { nfg } from "../trapLayouts/nfg";
 
   const cleanTrapLayout: TrapLayout = {
+    trap: [100, 100],
     cities: [],
     banners: [],
   };
@@ -152,6 +153,8 @@
 
   function handleReset() {
     layoutStore.set(nfg);
+    bearX = $layoutStore.trap?.[0] ?? 0;
+    bearY = $layoutStore.trap?.[1] ?? 0;
   }
 </script>
 
