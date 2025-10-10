@@ -10,8 +10,10 @@ export type MapTileType =
   | "river"
   | "turret"
   | "castle"
+  | "ruins"
   | "fort"
-  | "sanctuary";
+  | "sanctuary"
+  | "outpost";
 export type TileType = AllianceBuildingType | MapTileType;
 type ResourceType = "bread" | "wood" | "stone" | "iron";
 

@@ -1,4 +1,9 @@
-import type { ItemType, Mine, QualifiedItem } from "../types/types";
+import type {
+  AllianceBuildingType,
+  ItemType,
+  Mine,
+  QualifiedItem,
+} from "../types/types";
 
 export function getTileData<T extends ItemType>(item: T): QualifiedItem<T> {
   switch (item.type) {
@@ -82,4 +87,20 @@ export function getTilesBounds(
     minX,
     minY,
   };
+}
+
+export function isTerrainType(
+  type: string,
+): type is Exclude<ItemType["type"], AllianceBuildingType> {
+  return (
+    type === "mine" ||
+    type === "mountain" ||
+    type === "river" ||
+    type === "turret" ||
+    type === "castle" ||
+    type === "ruins" ||
+    type === "fort" ||
+    type === "sanctuary" ||
+    type === "outpost"
+  );
 }

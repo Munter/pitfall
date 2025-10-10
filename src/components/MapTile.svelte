@@ -1,6 +1,7 @@
 <script lang="ts">
   import { TILE_SIZE } from "../constants";
   import type { ItemType, QualifiedItem } from "../types/types";
+  import { isTerrainType } from "../util/tileData";
 
   type Props = {
     tileSize: number;
@@ -24,7 +25,7 @@
 </script>
 
 <div
-  class="grid-item"
+  class={["grid-item", { terrain: isTerrainType(item.type) }, item.type]}
   title={item.text}
   style:left={left + 2 + "px"}
   style:bottom={bottom + 2 + "px"}
@@ -79,5 +80,17 @@
   code {
     white-space: pre;
     font-size: 90%;
+  }
+
+  .terrain {
+    background-color: #eee;
+
+    &.mountain {
+      background-color: #aaa;
+    }
+
+    &.river {
+      background-color: #99f;
+    }
   }
 </style>
