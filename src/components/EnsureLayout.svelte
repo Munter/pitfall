@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { layoutStore } from "../stores/stores";
-  import { wheel } from "../trapLayouts/wheel";
   import { LayoutSchema } from "../util/layout";
+  import { nfg } from "../trapLayouts/nfg";
 
   let { children } = $props();
 
@@ -15,7 +15,7 @@
         )
       );
     } catch (e) {
-      layoutStore.set(wheel);
+      layoutStore.set(nfg);
     } finally {
       isLoading = false;
     }
